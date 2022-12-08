@@ -33,4 +33,14 @@ const calculateTotalWorkoutTime = (queue) => {
 //displayTotalWorkoutTime()
 //getWorkoutTimeLeft()
 
+const displayTotalWorkoutTime = (totalWorkoutTime) => {
+  const hours = ("" + Math.floor((totalWorkoutTime / 3600) % 360)).slice(-2);
+  let hour_or_hours = (hours > 1 || hours < 1) ? "hours" : "hour";
+  const minutes = (" " + Math.floor((totalWorkoutTime / 60) % 60)).slice(-2) + " min ";
+  const seconds = (" 0" + Math.floor((totalWorkoutTime / 1) % 60)).slice(-2) + " sec";
+  
+  return (hours + " " + hour_or_hours + " " + minutes + seconds);
+}
+
+export {displayTotalWorkoutTime}
 export default calculateTotalWorkoutTime;
