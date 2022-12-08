@@ -6,7 +6,7 @@ import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
-import calculateTotalWorkoutTime from "../utils/helpers";
+import calculateTotalWorkoutTime, {displayTotalWorkoutTime} from "../utils/helpers";
 
 const Container = styled.section`
   width: 100%;
@@ -38,6 +38,22 @@ const ColumnDiv = styled.div`
   margin-top: 7px;
 `;
 
+const TotalTimeDiv = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  font-size: 20px;
+  text-align: center;
+`;
+
+const RowDiv = styled.div`
+  display: grid;
+  grid-template-columns: .33fr .34fr .33fr;
+  gap: 10px;
+  padding: 7px;
+  align-items: center;
+`;
+
+
 const WorkoutView = () => {
   const {paused, setPaused, queue, totalWorkoutTime, setTotalWorkoutTime, TIMER_TYPES} = useContext(AppContext);
 
@@ -45,6 +61,7 @@ const WorkoutView = () => {
     setTotalWorkoutTime(calculateTotalWorkoutTime(queue));
   }, [queue, setTotalWorkoutTime]);
 
+  /*
   const displayTotalWorkoutTime = () => {
     const hours = ("" + Math.floor((totalWorkoutTime / 3600) % 360)).slice(-2);
     let hour_or_hours = (hours > 1 || hours < 1) ? "hours" : "hour";
@@ -53,21 +70,27 @@ const WorkoutView = () => {
     
     return (hours + " " + hour_or_hours + " " + minutes + seconds);
   }
+  */
 
   return (
     <Container>
       <SideBar/>
       <Body>
         <ColumnDiv>
+          <TotalTimeDiv>Total Workout Time: {displayTotalWorkoutTime(totalWorkoutTime)}</TotalTimeDiv>
+            <RowDiv>
+              <button
+                onClick={() => {
+                  setPaused(!paused);
+                }}
+              >
+                {paused ? 'Run' : 'Pause'}
+              </button>
+              <button>Reset</button>
+              <button>End Workout</button>
+            </RowDiv>
           <Timers>
-          <div>Total Workout Time: {displayTotalWorkoutTime()}</div>
-          <button
-            onClick={() => {
-              setPaused(!paused);
-            }}
-          >
-            {paused ? 'Run' : 'Pause'}
-          </button>
+          
             {queue.map((t, i) => {
               const timerProps = {
                 key: i,
