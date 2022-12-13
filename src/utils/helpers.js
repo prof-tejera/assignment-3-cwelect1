@@ -2,6 +2,9 @@
 // calculates number of minutes when passed in seconds. Things of this nature that you don't want to copy/paste
 // everywhere.
 
+import { useContext } from 'react';
+import { AppContext } from "../Context";
+
 const calculateTotalWorkoutTime = (queue) => {
   let total = 0;
   const millisecondsToSecondsDivisor = 1000;
@@ -30,17 +33,44 @@ const calculateTotalWorkoutTime = (queue) => {
   return total;
 }
 
-//displayTotalWorkoutTime()
-//getWorkoutTimeLeft()
+const DisplayTotalWorkoutTime = (totalWorkoutTime) => {
+  const {elapsedTime, setElapsedTime} = useContext(AppContext);
 
-const displayTotalWorkoutTime = (totalWorkoutTime) => {
-  const hours = ("" + Math.floor((totalWorkoutTime / 3600) % 360)).slice(-2);
+  const totalTime = totalWorkoutTime - elapsedTime;
+  const hours = ("" + Math.floor((totalTime / 3600) % 360)).slice(-2);
   let hour_or_hours = (hours > 1 || hours < 1) ? "hours" : "hour";
-  const minutes = (" " + Math.floor((totalWorkoutTime / 60) % 60)).slice(-2) + " min ";
-  const seconds = (" 0" + Math.floor((totalWorkoutTime / 1) % 60)).slice(-2) + " sec";
+  const minutes = (" " + Math.floor((totalTime / 60) % 60)).slice(-2) + " min ";
+  const seconds = (" 0" + Math.floor((totalTime / 1) % 60)).slice(-2) + " sec";
   
-  return (hours + " " + hour_or_hours + " " + minutes + seconds);
+  if ((hours < 0) || (minutes < 0) || (seconds < 0)) {
+    setElapsedTime(0);
+    return (0 + " " + hour_or_hours + " 0 min 00 sec");
+  } else {
+    return (hours + " " + hour_or_hours + " " + minutes + seconds);
+  }
 }
 
-export {displayTotalWorkoutTime}
+const buildSearchParams = (queue) => {
+  let params = '';
+  for (const timer of queue) {
+    for (const [key, value] of Object.entries(timer)) {
+      //console.log(`${key}: ${value}`);
+      params = params + '{' + key + ':' + value + '},';
+      //setSearchParams(`${key}: ${value}`);
+    }
+  }
+  console.log(params);
+  return params;
+}
+
+const encodeURL = (URL) => {
+  //return Buffer.from(URL).toString('base64url')
+  return encodeURIComponent(URL);
+}
+
+// decodeURL
+// readURL
+// saveURL
+
+export {DisplayTotalWorkoutTime, encodeURL, buildSearchParams}
 export default calculateTotalWorkoutTime;
