@@ -1,5 +1,11 @@
 # Assignment 3 (A3)
 
+Bugs/Features That Need Fix'n
+ - Workout Page - Incorrect counter (of same type) being deleted when more than 1 of the same type exists
+ - Add Timer Page - Control alignment aries when switching types
+ - Rest Button not working correctly
+ - End Workout button not working correctly
+
 Now that we have our basic workout app working (A2) we are going to build out more features. Our starting point is your A2 code, so copy it into this repo (not the `.github` folder). ***The goal is to have a production ready workout app by the end of A3.*** Some of the features below are harder to implement than others. I recommend staring with the "Persisting state" and then doing the rest in any order.
 
 ## List of new features 
