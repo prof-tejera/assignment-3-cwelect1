@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useContext } from 'react';
 import { AppContext } from "../Context";
@@ -6,7 +6,8 @@ import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
-import calculateTotalWorkoutTime, {displayTotalWorkoutTime} from "../utils/helpers";
+import {DisplayTotalWorkoutTime} from "../utils/helpers";
+
 
 const Container = styled.section`
   width: 100%;
@@ -53,44 +54,53 @@ const RowDiv = styled.div`
   align-items: center;
 `;
 
-
 const WorkoutView = () => {
-  const {paused, setPaused, queue, totalWorkoutTime, setTotalWorkoutTime, TIMER_TYPES} = useContext(AppContext);
+  const {setReset, paused, setPaused, ff, queue, totalWorkoutTime, TIMER_TYPES, workoutEnded, workoutHistory} = useContext(AppContext);
+  //console.log (queue);
+  
+  if (workoutEnded) {
+    console.log('workoutHistory: ' + workoutHistory);
+  } 
+  
+  //const handleSearchParams = () => {
+    //searchParams = setSearchParams({q:21});
+  //}
 
-  useEffect(() => {
-    setTotalWorkoutTime(calculateTotalWorkoutTime(queue));
-  }, [queue, setTotalWorkoutTime]);
+  // readURL
 
-  /*
-  const displayTotalWorkoutTime = () => {
-    const hours = ("" + Math.floor((totalWorkoutTime / 3600) % 360)).slice(-2);
-    let hour_or_hours = (hours > 1 || hours < 1) ? "hours" : "hour";
-    const minutes = (" " + Math.floor((totalWorkoutTime / 60) % 60)).slice(-2) + " min ";
-    const seconds = (" 0" + Math.floor((totalWorkoutTime / 1) % 60)).slice(-2) + " sec";
-    
-    return (hours + " " + hour_or_hours + " " + minutes + seconds);
-  }
-  */
+  /*let [searchParams, setSearchParams] = useSearchParams();
+  //console.log(searchParams.getAll());
+  const url = new URL(document.location.href);
+  console.log('URL.search: ' + url.search)
+  if (url.search === '' && queue > 0) {
+    console.log(url); 
+    const newUrl = url + '?' + queue;
+    document.location.href = newUrl;
+  } else {
+    console.log(url);
+    console.log(url.search)
+  }*/
+
+  // updateURL
 
   return (
     <Container>
       <SideBar/>
       <Body>
         <ColumnDiv>
-          <TotalTimeDiv>Total Workout Time: {displayTotalWorkoutTime(totalWorkoutTime)}</TotalTimeDiv>
+          <TotalTimeDiv>Workout Time: {DisplayTotalWorkoutTime(totalWorkoutTime)}</TotalTimeDiv>
             <RowDiv>
-              <button
-                onClick={() => {
-                  setPaused(!paused);
-                }}
-              >
+              <button onClick={() => {setPaused(!paused);}}>
                 {paused ? 'Run' : 'Pause'}
               </button>
-              <button>Reset</button>
-              <button>End Workout</button>
+              <button onClick={() => {setReset(true);}}>
+                Reset
+              </button>
+              <button onClick={() => {ff()}}>
+                End Workout
+              </button>
             </RowDiv>
           <Timers>
-          
             {queue.map((t, i) => {
               const timerProps = {
                 key: i,
