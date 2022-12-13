@@ -1,13 +1,12 @@
-import React from "react";
+import { React, useState, useContext } from 'react';
+import { AppContext } from "../../Context";
 import styled from "styled-components";
 import Select from "../generic/Select";
 import Stopwatch from "./Stopwatch";
 import Countdown from "./Countdown";
 import XY from "./XY";
 import Tabata from "./Tabata";
-import { useState } from "react";
-import { useContext } from 'react';
-import { AppContext } from "../../Context";
+import TextBox from "../generic/TextBox";
 
 const ClearDiv = styled.div`
   display: grid;
@@ -19,7 +18,7 @@ const ClearDiv = styled.div`
 const ColumnDiv = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin-top: 10px;
 `;
 
 const RowDiv = styled.div`
@@ -32,6 +31,7 @@ const RowDiv = styled.div`
 
 const TimerConfig = (props) => {
   const {addItem, queue, TIMER_TYPES} = useContext(AppContext);
+  const [description, setDescription] = useState();
 
   const StopwatchConfig = () => {
     const [maxTime, setMaxTime] = useState(60)  
@@ -39,12 +39,13 @@ const TimerConfig = (props) => {
     const handleOnChangeMaxTime = (e) => {
       setMaxTime(e.target.value);
     };
-
+    
     const handleAddTimer = () => {
       addItem({
         type: 'Stopwatch',
         maxTime: maxTime * 1000
       });
+      // update URL
     }
 
     return(
@@ -54,6 +55,10 @@ const TimerConfig = (props) => {
             <label>Start Time (Seconds)</label>
             <Select value={maxTime} onChange={handleOnChangeMaxTime} width="50%" name="rounds" dd_items={[5, 10, 15, 20, 25, 30, 60, 90]}></Select>
             <button onClick={handleAddTimer}>Add Timer</button>
+          </RowDiv>
+          <RowDiv>
+            <label>Description</label>
+            <TextBox value={description} width="60%" name="description"></TextBox>
           </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -95,11 +100,17 @@ const TimerConfig = (props) => {
 
     return(
       <ClearDiv className="timer">
-        <RowDiv>
-          <label>Start Time (Seconds)</label>
-          <Select value={startTime} onChange={handleOnChangeStartTime} width="50%" name="rounds" dd_items={[5, 10, 15, 20, 25, 30, 60, 90]}></Select>
-          <button onClick={handleAddTimer}>Add Timer</button>
-        </RowDiv>
+        <ColumnDiv>
+          <RowDiv>
+            <label>Start Time (Seconds)</label>
+            <Select value={startTime} onChange={handleOnChangeStartTime} width="50%" name="rounds" dd_items={[5, 10, 15, 20, 25, 30, 60, 90]}></Select>
+            <button onClick={handleAddTimer}>Add Timer</button>
+          </RowDiv>
+          <RowDiv>
+            <label>Description</label>
+            <TextBox value={description} width="60%" name="description"></TextBox>
+          </RowDiv>
+        </ColumnDiv>
         <ColumnDiv>
           {queue.map((t, i) => {
             const timerProps = {
@@ -153,6 +164,10 @@ const TimerConfig = (props) => {
             <label>Start Time (Seconds)</label>
             <Select value={startTime} onChange={handleOnChangeStartTime} width="25%" name="workTime" dd_items={[5, 10, 15, 30, 45, 60, 90]}></Select>
             <button onClick={handleAddTimer}>Add Timer</button>
+          </RowDiv>
+          <RowDiv>
+            <label>Description</label>
+            <TextBox value={description} width="60%" name="description"></TextBox>
           </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -222,6 +237,10 @@ const TimerConfig = (props) => {
           <label>Rest Time (Seconds)</label>
             <Select value={restTime} onChange={handleOnChangeRestTime} width="50%" name="restTime" dd_items={[5, 10, 15, 30, 45, 60, 90]}></Select>
         </RowDiv>
+        <RowDiv>
+          <label>Description</label>
+          <TextBox value={description} width="60%" name="description"></TextBox>
+        </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
           {queue.map((t, i) => {
@@ -268,7 +287,6 @@ const TimerConfig = (props) => {
   } else {
     return <Default />
   }
-
 };
 
 export default TimerConfig;
