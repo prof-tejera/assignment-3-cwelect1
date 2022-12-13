@@ -33,6 +33,7 @@ const TimerConfig = (props) => {
   const {addItem, queue, TIMER_TYPES} = useContext(AppContext);
   const [description, setDescription] = useState();
 
+  // ********* STOPWATCH *********
   const StopwatchConfig = () => {
     const [maxTime, setMaxTime] = useState(60)  
     
@@ -84,6 +85,7 @@ const TimerConfig = (props) => {
     );
   }
 
+  // ********* COUNTDOWN *********
   const CountdownConfig = () => {
     const [startTime, setStartTime] = useState(5)
 
@@ -135,6 +137,7 @@ const TimerConfig = (props) => {
     );
   }
 
+  // ************ XY *************
   const XYConfig = () => {
     const [rounds, setRounds] = useState(1);
     const [startTime, setStartTime] = useState(5);
@@ -195,6 +198,7 @@ const TimerConfig = (props) => {
     );
   }
 
+  // ********** TABATA ***********
   const TabataConfig = () => {
     const [rounds, setRounds] = useState(1);
     const [workTime, setWorkTime] = useState(5);
