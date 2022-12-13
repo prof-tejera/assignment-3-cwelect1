@@ -1,6 +1,5 @@
 // A timer that counts up to X amount of time (e.g. count up to 2 minutes and 30 seconds, starting at 0)
-import { useState } from "react";
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../Context";
 import { useInterval } from '../../hooks';
 import styled from "styled-components";
@@ -31,29 +30,40 @@ const Stopwatch = (props) => {
   const [time, setTime] = useState(0);
   const endTime = props.maxTime;
 
-  const { removeItem, paused, activeIndex, setActiveIndex } = useContext(AppContext);
-  const [isRunning, setIsRunning] = useState(false);
+  const { removeItem, paused, reset, activeIndex, setActiveIndex, setElapsedTime, setReset } = useContext(AppContext);
   const active = activeIndex === props.index;
 
   useInterval(() => {
     if (paused || !active) return;
-    
-    setIsRunning(true);
+    if (reset) {
+      setTime(0);
+      setReset(false);
+      return;
+    }
+
     if (time === endTime) {
       setActiveIndex(props.index + 1);
-      setIsRunning(false);
     } else {
       setTime(c => c + 1000);
+      setElapsedTime(c => c + 1);
     }
   }, ((time === 0) & (props.index !== 0)) ? 0 : 1000);
 
+  // User reset Workout?
+  useEffect(() => {
+    if (reset) {
+      setTime(0);
+      return;
+    }
+  }, [reset]);
+  
   const handleDelete = () => {
     removeItem(props.index);
   }
   
   return (
     <div>
-      <Timer border={isRunning ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
+      <Timer border={!paused && active ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
         <Delete onClick={handleDelete}>x</Delete>
         <Title>{props.type}</Title>
           <div className="stop-watch">

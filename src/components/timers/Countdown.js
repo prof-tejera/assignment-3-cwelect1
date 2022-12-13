@@ -1,6 +1,5 @@
 // A timer that counts from a specified time (in milliseconds) to 0 (e.g. count down from 2 minutes and 30 seconds to 0)
-import { useState } from "react";
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../Context";
 import { useInterval } from '../../hooks';
 import styled from "styled-components";
@@ -32,31 +31,42 @@ const Countdown = (props) => {
   const endTime = 0;
   const [time, setTime] = useState(startTime);
 
-  const {removeItem, paused, activeIndex, setActiveIndex} = useContext(AppContext);
-  const [isRunning, setIsRunning] = useState(false);
+  const {reset, setElapsedTime, removeItem, paused, activeIndex, setActiveIndex} = useContext(AppContext);
   const active = activeIndex === props.index;
 
   useInterval(() => {
     if (paused || !active) return;
     
-    setIsRunning(true);
     if (time === endTime) {
       setActiveIndex(props.index + 1);
-      setIsRunning(false);
     } else {
       setTime(c => c - 1000);
+      setElapsedTime(c => c + 1);
     }
   }, ((time === props.startTime) & (props.index !== 0)) ? 0 : 1000);
 
+  // User reset Workout?
+  useEffect(() => {
+    if (reset) {
+      setTime(startTime);
+      return;
+    }
+  }, [reset, startTime]);
+  
   const handleDelete = () => {
     removeItem(props.index);
+    console.log('props.index: ' + props.index)
+  }
+
+  const handleEdit = () => {
+    console.log('Clicked on Countdown Timer')
   }
 
   return (
     <div>
-      <Timer border={isRunning ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
+      <Timer border={(!paused && active) ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
         <Delete onClick={handleDelete}>x</Delete>
-        <Title>{props.type}</Title>
+        <Title onClick={handleEdit}>{props.type}</Title>
           <div className="countdown">
             <Panel endTime={endTime} time={time}/>
           </div>

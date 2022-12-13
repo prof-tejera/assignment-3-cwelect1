@@ -1,6 +1,5 @@
 // A timer that counts from a specified time (in milliseconds) to 0 (e.g. count down from 2 minutes and 30 seconds to 0)
-import { useState } from "react";
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../Context";
 import { useInterval } from '../../hooks';
 import styled from "styled-components";
@@ -36,16 +35,15 @@ const Tabata = (props) => {
   const [currentRound, setCurrentRound] = useState(1);
   const [isResting, setIsResting] = useState(false);
 
-  const {removeItem, paused, activeIndex, setActiveIndex} = useContext(AppContext);
-  const [isRunning, setIsRunning] = useState(false);
+  const {removeItem, paused, activeIndex, setActiveIndex, setElapsedTime, reset} = useContext(AppContext);
   const active = activeIndex === props.index;
 
   useInterval(() => {
     if (paused || !active) return;
 
-    setIsRunning(true);
     if (time !== endTime) {
       setTime(c => c - 1000);
+      setElapsedTime(c => c + 1);
     } else if (time === endTime && (currentRound <= totalRounds) && isResting === false) { // Working done. Change to Resting
       setIsResting(true);
       setTime(restTime);
@@ -55,17 +53,26 @@ const Tabata = (props) => {
       setTime(workTime);
     } else { // Running Completed
       setActiveIndex(props.index + 1);
-      setIsRunning(false);
     }
   }, (((time === props.workTime) & (isResting === true)) & (currentRound !== 1)) ? 0 : 1000); // fix this...not accurate
 
+  // User reset Workout?
+  useEffect(() => {
+    if (reset) {
+      setTime(workTime);
+      setCurrentRound(1);
+      setIsResting(false);
+      return;
+    }
+  }, [reset, workTime]);
+    
   const handleDelete = () => {
     removeItem(props.index);
   }
 
   return (
     <div>
-      <Timer border={isRunning ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
+      <Timer border={!paused && active ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
         <Delete onClick={handleDelete}>x</Delete>
         <Title>{props.type}</Title>
           <div className="tabata">
