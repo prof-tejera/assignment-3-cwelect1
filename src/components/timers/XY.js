@@ -23,7 +23,22 @@ font-size: 1.5rem;
 const Delete = styled.button`
   background-color: transparent;
   color: red;
-  align-self: end;
+  float: right;
+  ${(props) => props.hideControls};
+`;
+
+const UpDown = styled.button`
+  color: black;
+  ${(props) => props.hideControls};
+`;
+
+const RowDiv = styled.div`
+  width: 100%;
+`;
+
+const Description = styled.div`
+  text-align: center;
+  width: 100%;
 `;
 
 const XY = (props) => {
@@ -32,8 +47,9 @@ const XY = (props) => {
   let totalRounds = props.rounds;
   const [time, setTime] = useState(startTime);
   const [currentRound, setCurrentRound] = useState(1);
+  const [hideControls, setHideControls] = useState({visibility:'hidden'});
 
-  const {removeItem, paused, setElapsedTime, activeIndex, setActiveIndex, reset} = useContext(AppContext);
+  const {removeItem, paused, queue, setElapsedTime, activeIndex, setActiveIndex, setReset, reset} = useContext(AppContext);
   const active = activeIndex === props.index;
 
   useInterval(() => {
@@ -61,16 +77,46 @@ const XY = (props) => {
       
   const handleDelete = () => {
     removeItem(props.index);
+    setReset(true); 
+  }
+
+  const handleMouseEnter = (e) => {
+    setHideControls();
+  }
+
+  const handleMouseLeave = (e) => {
+    setHideControls({visibility: 'hidden'});
+  }
+ 
+  let upButton = '';
+  if (props.index === 0) {                   // Only 1 timer - Don't show up button
+    upButton = <UpDown hideControls={{visibility:'hidden'}}>&#8593;</UpDown>
+  } else {                                    // Display Move Up button
+    upButton = <UpDown hideControls={hideControls}>&#8593;</UpDown>
+  }
+
+  let downButton = '';
+  if (props.index === queue.length - 1) {     // Last timer - Don't show down buttom
+    downButton = <UpDown hideControls={{visibility:'hidden'}}>&#8595;</UpDown>   
+  } else {                                    // Move Up and Move Down button
+    downButton = <UpDown hideControls={hideControls}>&#8595;</UpDown>
   }
 
   return (
     <div>
-      <Timer border={!paused && active ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
-        <Delete onClick={handleDelete}>x</Delete>
+      <Timer onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} border={!paused && active ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
+        <RowDiv>
+          {upButton}
+          <Delete onClick={handleDelete} hideControls={hideControls}>x</Delete>
+        </RowDiv>
         <Title>{props.type}</Title>
           <div className="xy">
             <Panel time={time} displayType='xy' currentRound={currentRound}/>
           </div>
+        <RowDiv>
+          {downButton}
+          <Description>{props.description}</Description>
+        </RowDiv>
       </Timer>
     </div>
   );
