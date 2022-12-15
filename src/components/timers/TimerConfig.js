@@ -30,22 +30,24 @@ const RowDiv = styled.div`
 `;
 
 const TimerConfig = (props) => {
-  const {addItem, queue, TIMER_TYPES} = useContext(AppContext);
-  const [description, setDescription] = useState();
+  const {addItem, setReset, queue, TIMER_TYPES} = useContext(AppContext);
 
   // ********* STOPWATCH *********
   const StopwatchConfig = () => {
-    const [maxTime, setMaxTime] = useState(60)  
-    
+    const [maxTime, setMaxTime] = useState(60);
+    const [description, setDescription] = useState('');
+
     const handleOnChangeMaxTime = (e) => {
       setMaxTime(e.target.value);
     };
     
-    const handleAddTimer = () => {
+    const handleAddTimer = (e) => {
       addItem({
         type: 'Stopwatch',
-        maxTime: maxTime * 1000
+        maxTime: maxTime * 1000,
+        description: description
       });
+      setReset(true); 
       // update URL
     }
 
@@ -59,7 +61,7 @@ const TimerConfig = (props) => {
           </RowDiv>
           <RowDiv>
             <label>Description</label>
-            <TextBox value={description} width="60%" name="description"></TextBox>
+            <TextBox value={description} onChange={e => setDescription(e.target.value)} width="60%" name="description"></TextBox>
           </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -67,6 +69,7 @@ const TimerConfig = (props) => {
               const timerProps = {
                 key: i,
                 index: i,
+                description: description,
                 ...t
               };
               if (t.type === TIMER_TYPES.STOPWATCH) {
@@ -87,17 +90,20 @@ const TimerConfig = (props) => {
 
   // ********* COUNTDOWN *********
   const CountdownConfig = () => {
-    const [startTime, setStartTime] = useState(5)
+    const [startTime, setStartTime] = useState(5);
+    const [description, setDescription] = useState('');
 
     const handleOnChangeStartTime = (e) => {
       setStartTime(e.target.value);
     };
 
-    const handleAddTimer = () => {
+    const handleAddTimer = (e) => {
       addItem({
         type: 'Countdown',
-        startTime: startTime * 1000
+        startTime: startTime * 1000,
+        description: description
       });
+      setReset(true); 
     }
 
     return(
@@ -110,7 +116,7 @@ const TimerConfig = (props) => {
           </RowDiv>
           <RowDiv>
             <label>Description</label>
-            <TextBox value={description} width="60%" name="description"></TextBox>
+            <TextBox value={description} onChange={e => setDescription(e.target.value)} width="60%" name="description"></TextBox>
           </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -119,6 +125,7 @@ const TimerConfig = (props) => {
               key: i,
               index: i,
               startTime: startTime,
+              description: description,
               ...t
             };
             if (t.type === TIMER_TYPES.STOPWATCH) {
@@ -141,6 +148,7 @@ const TimerConfig = (props) => {
   const XYConfig = () => {
     const [rounds, setRounds] = useState(1);
     const [startTime, setStartTime] = useState(5);
+    const [description, setDescription] = useState('');
 
     const handleOnChangeRounds = (e) => {
       setRounds(e.target.value);
@@ -150,12 +158,14 @@ const TimerConfig = (props) => {
       setStartTime(e.target.value);
     };
   
-    const handleAddTimer = () => {
+    const handleAddTimer = (e) => {
       addItem({
         type: 'XY',
         rounds: rounds,
-        startTime: startTime * 1000
+        startTime: startTime * 1000,
+        description: description
       });
+      setReset(true); 
     }
 
     return(
@@ -170,7 +180,7 @@ const TimerConfig = (props) => {
           </RowDiv>
           <RowDiv>
             <label>Description</label>
-            <TextBox value={description} width="60%" name="description"></TextBox>
+            <TextBox value={description} onChange={e => setDescription(e.target.value)} width="60%" name="description"></TextBox>
           </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -180,6 +190,7 @@ const TimerConfig = (props) => {
               index: i,
               startTime: startTime,
               rounds: rounds,
+              description: description,
               ...t
             };
             if (t.type === TIMER_TYPES.STOPWATCH) {
@@ -203,6 +214,7 @@ const TimerConfig = (props) => {
     const [rounds, setRounds] = useState(1);
     const [workTime, setWorkTime] = useState(5);
     const [restTime, setRestTime] = useState(5);
+    const [description, setDescription] = useState('');
 
     const handleOnChangeRounds = (e) => {
       setRounds(e.target.value);
@@ -216,13 +228,15 @@ const TimerConfig = (props) => {
       setRestTime(e.target.value);
     };
   
-    const handleAddTimer = () => {
+    const handleAddTimer = (e) => {
       addItem({
         type: 'Tabata',
         rounds: rounds,
         workTime: workTime * 1000,
-        restTime: restTime * 1000
+        restTime: restTime * 1000,
+        description: description
       });
+      setReset(true); 
     }
 
     return(
@@ -243,7 +257,7 @@ const TimerConfig = (props) => {
         </RowDiv>
         <RowDiv>
           <label>Description</label>
-          <TextBox value={description} width="60%" name="description"></TextBox>
+            <TextBox value={description} onChange={e => setDescription(e.target.value)} width="60%" name="description"></TextBox>
         </RowDiv>
         </ColumnDiv>
         <ColumnDiv>
@@ -254,6 +268,7 @@ const TimerConfig = (props) => {
               workTime: workTime,
               restTime: restTime,
               rounds: rounds,
+              description: description,
               ...t
             };
             if (t.type === TIMER_TYPES.STOPWATCH) {
@@ -275,7 +290,26 @@ const TimerConfig = (props) => {
   const Default = () => {
     return(
       <ClearDiv className="timer">
-        Select a timer to configure.
+        <ColumnDiv>Select a timer to configure.</ColumnDiv>
+        <ColumnDiv>
+          {queue.map((t, i) => {
+            const timerProps = {
+              key: i,
+              index: i,
+              ...t
+            };
+            if (t.type === TIMER_TYPES.STOPWATCH) {
+              return <Stopwatch {...timerProps} />;
+            } else if (t.type === TIMER_TYPES.COUNTDOWN) {
+              return <Countdown {...timerProps} />;
+            } else if (t.type === TIMER_TYPES.XY) {
+              return <XY {...timerProps} />;
+            } else if (t.type === TIMER_TYPES.TABATA) {
+              return <Tabata {...timerProps} />;
+            } 
+            return null;
+          })}
+        </ColumnDiv>
       </ClearDiv>
     );
   }
