@@ -65,10 +65,7 @@ const WorkoutView = () => {
     if (workoutEnded) {
       addWorkoutHistory(queue);
     }
-  }, [queue, workoutEnded]);
-  //const [searchParams, setSearchParams] = useSearchParams();
-  //setQueue(JSON.stringify(searchParams.get('queue')));
-  //setSearchParams({ 'queue': JSON.stringify(searchParams.get('queue')) });
+  }, [addWorkoutHistory, queue, workoutEnded]);
 
   return (
     <Container>

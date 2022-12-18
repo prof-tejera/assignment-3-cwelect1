@@ -4,6 +4,7 @@ import calculateTotalWorkoutTime from './utils/helpers';
 import { usePersistedState } from './hooks';
 import { useSearchParams } from 'react-router-dom';
 
+
 export const AppContext = React.createContext({});
 
 const AppProvider = ({ children }) => {
@@ -69,7 +70,7 @@ const AppProvider = ({ children }) => {
   const removeFromQueue = (item) => {
     setQueue(q => q.filter((_, index) => index !==item));
   }
-  
+
   return (
     <AppContext.Provider
       value={{
@@ -92,6 +93,7 @@ const AppProvider = ({ children }) => {
         setReset: resetWorkout,	
         setSearchParams,
         setTotalWorkoutTime: (time) => setTotalWorkoutTime(time),	
+        setWorkoutEnded,
         TIMER_TYPES,	
         totalWorkoutTime,	
         workoutEnded,	
