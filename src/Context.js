@@ -4,7 +4,6 @@ import calculateTotalWorkoutTime from './utils/helpers';
 import { usePersistedState } from './hooks';
 import { useSearchParams } from 'react-router-dom';
 
-
 export const AppContext = React.createContext({});
 
 const AppProvider = ({ children }) => {
@@ -43,12 +42,13 @@ const AppProvider = ({ children }) => {
     if ((queue.length !== 0) && (activeIndex === queue.length -1) && totalWorkoutTime - elapsedTime === 0) {
       setWorkoutEnded(true);
       setPaused(true);
-      //addToHistory([queue]);
+      addWorkoutHistory([...workoutHistory, queue]);
+      setActiveIndex(0);
     } else {
       setWorkoutEnded(false);
       setReset(false); 
     }
-  }, [activeIndex, elapsedTime, setPaused, setReset, setWorkoutEnded, totalWorkoutTime, queue, workoutEnded]);
+  }, [activeIndex, addWorkoutHistory, elapsedTime, setActiveIndex, setPaused, setReset, setWorkoutEnded, totalWorkoutTime, queue, workoutEnded, workoutHistory]);
   
   const addToQueue = (item) => {
     setQueue(q => [...q, item]);

@@ -55,18 +55,12 @@ const RowDiv = styled.div`
 `;
 
 const WorkoutView = () => {
-  const {addWorkoutHistory, ff, paused, queue, setPaused, setReset, setSearchParams, TIMER_TYPES, totalWorkoutTime, workoutEnded} = useContext(AppContext);
-  console.log(queue);
+  const {ff, paused, queue, setPaused, setReset, setSearchParams, TIMER_TYPES, totalWorkoutTime} = useContext(AppContext);
+  
   useEffect(() => {
     setSearchParams({ 'queue': JSON.stringify(queue) });
   }, [setSearchParams, queue]);
   
-  useEffect(() => {
-    if (workoutEnded) {
-      addWorkoutHistory(queue);
-    }
-  }, [addWorkoutHistory, queue, workoutEnded]);
-
   return (
     <Container>
       <SideBar/>

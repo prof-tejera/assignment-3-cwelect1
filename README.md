@@ -1,10 +1,8 @@
 # Assignment 3 (A3)
 
 GRADER NOTES - Bugs/Features That Need Fix'n
- - Workout Page - query params loading in queue, but not creating queue on screen. This has been the bain of my existence.
-                  I've easted so much time trying to get this working. I had it working and must have deleted the code, casue it isn't working anymore.
- - WorkoutView line 67 - I am forced to add addWorkoutHistory to the effect array. This causes an infinite loop. Haven't figured out how to avoid this. Because I MUST add this to be able to deploy to gh-page, the app is broken. If I leave it our, it warns but works.
- - Add Timer Page - Control alignment () varies when switching types. Going back to CSS school
+ - Workout Page - query params loading in queue, but not creating queue on screen. If you copy thw URL and enter in new browser, it works. Apparently, persisted state (local storage) is messing me up.
+ - Add Timer Page - Control alignment varies when switching types. Going back to CSS school
  - DRY - I was going to dry this up, but time ran out
  - Edit Timer - not implemented at all (yet)
  - History Page - I haven't created the content of history page. I'm just logging the workout history to console.
