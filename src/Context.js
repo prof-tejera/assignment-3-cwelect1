@@ -76,7 +76,7 @@ const AppProvider = ({ children }) => {
       value={{
         activeIndex,	
         addItem: (item) => {addToQueue(item)},	
-        addWorkoutHistory: (item) => {addWorkoutHistory(() => [...workoutHistory, item])},
+        //addWorkoutHistory: (item) => {addWorkoutHistory(() => [...workoutHistory, item])},
 		    displayTimer,
         elapsedTime,	
         ff: fastForward,
