@@ -32,7 +32,7 @@ const AppProvider = ({ children }) => {
     setPaused(true);
     setReset(reset);
   }
-
+  
   useEffect(() => {
     setTotalWorkoutTime(calculateTotalWorkoutTime(queue));
   }, [queue, setTotalWorkoutTime]);
@@ -76,7 +76,6 @@ const AppProvider = ({ children }) => {
       value={{
         activeIndex,	
         addItem: (item) => {addToQueue(item)},	
-        //addWorkoutHistory: (item) => {addWorkoutHistory(() => [...workoutHistory, item])},
 		    displayTimer,
         elapsedTime,	
         ff: fastForward,
