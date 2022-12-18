@@ -1,5 +1,12 @@
 # Assignment 3 (A3)
 
+GRADER NOTES - Bugs/Features That Need Fix'n
+ - Workout Page - query params loading in queue, but not creating queue on screen. If you copy thw URL and enter in new browser, it works. Apparently, persisted state (local storage) is messing me up.
+ - Add Timer Page - Control alignment varies when switching types. Going back to CSS school
+ - DRY - I was going to dry this up, but time ran out
+ - Edit Timer - not implemented at all (yet)
+ - History Page - I haven't created the content of history page. I'm just logging the workout history to console.
+
 Now that we have our basic workout app working (A2) we are going to build out more features. Our starting point is your A2 code, so copy it into this repo (not the `.github` folder). ***The goal is to have a production ready workout app by the end of A3.*** Some of the features below are harder to implement than others. I recommend staring with the "Persisting state" and then doing the rest in any order.
 
 ## List of new features 
