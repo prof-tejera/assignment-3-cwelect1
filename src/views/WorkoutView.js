@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AppContext } from "../Context";
 import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
-import {DisplayTotalWorkoutTime} from "../utils/helpers";
-
+import { DisplayTotalWorkoutTime } from "../utils/helpers";
 
 const Container = styled.section`
   width: 100%;
@@ -37,6 +36,7 @@ const ColumnDiv = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 7px;
+  margin-bottom: 20px;
 `;
 
 const TotalTimeDiv = styled.div`
@@ -55,33 +55,20 @@ const RowDiv = styled.div`
 `;
 
 const WorkoutView = () => {
-  const {setReset, paused, setPaused, ff, queue, totalWorkoutTime, TIMER_TYPES, workoutEnded, workoutHistory} = useContext(AppContext);
-  //console.log (queue);
+  const {addWorkoutHistory, ff, paused, queue, setPaused, setReset, setSearchParams, TIMER_TYPES, totalWorkoutTime, workoutEnded} = useContext(AppContext);
+  console.log(queue);
+  useEffect(() => {
+    setSearchParams({ 'queue': JSON.stringify(queue) });
+  }, [setSearchParams, queue]);
   
-  if (workoutEnded) {
-    console.log('workoutHistory: ' + workoutHistory);
-  } 
-  
-  //const handleSearchParams = () => {
-    //searchParams = setSearchParams({q:21});
-  //}
-
-  // readURL
-
-  /*let [searchParams, setSearchParams] = useSearchParams();
-  //console.log(searchParams.getAll());
-  const url = new URL(document.location.href);
-  console.log('URL.search: ' + url.search)
-  if (url.search === '' && queue > 0) {
-    console.log(url); 
-    const newUrl = url + '?' + queue;
-    document.location.href = newUrl;
-  } else {
-    console.log(url);
-    console.log(url.search)
-  }*/
-
-  // updateURL
+  useEffect(() => {
+    if (workoutEnded) {
+      addWorkoutHistory(queue);
+    }
+  }, [queue, workoutEnded]);
+  //const [searchParams, setSearchParams] = useSearchParams();
+  //setQueue(JSON.stringify(searchParams.get('queue')));
+  //setSearchParams({ 'queue': JSON.stringify(searchParams.get('queue')) });
 
   return (
     <Container>
@@ -94,7 +81,7 @@ const WorkoutView = () => {
                 {paused ? 'Run' : 'Pause'}
               </button>
               <button onClick={() => {setReset(true);}}>
-                Reset
+                Start Over
               </button>
               <button onClick={() => {ff()}}>
                 End Workout

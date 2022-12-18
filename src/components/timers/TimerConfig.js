@@ -19,6 +19,7 @@ const ColumnDiv = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  margin-bottom: 20px;
 `;
 
 const RowDiv = styled.div`

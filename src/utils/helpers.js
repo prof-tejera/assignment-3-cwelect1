@@ -50,27 +50,20 @@ const DisplayTotalWorkoutTime = (totalWorkoutTime) => {
   }
 }
 
-const buildSearchParams = (queue) => {
-  let params = '';
-  for (const timer of queue) {
-    for (const [key, value] of Object.entries(timer)) {
-      //console.log(`${key}: ${value}`);
-      params = params + '{' + key + ':' + value + '},';
-      //setSearchParams(`${key}: ${value}`);
-    }
-  }
-  console.log(params);
-  return params;
-}
-
-const encodeURL = (URL) => {
-  //return Buffer.from(URL).toString('base64url')
-  return encodeURIComponent(URL);
-}
-
-// decodeURL
-// readURL
 // saveURL
+/*const saveURL = (queue, url) => {
+  console.log('URL before: ' + url);
+  window.history.pushState({},'',`${url.origin}${url.pathname}?queue=${encodeURI(JSON.stringify(queue))}`);
+  console.log('URL after: ' + url);
+}*/
 
-export {DisplayTotalWorkoutTime, encodeURL, buildSearchParams}
+// getSearchParams
+const getSearchParams = (url) => {
+  let queue = url.searchParams.get('queue');
+  console.log('URL Queue Search Param: ' + queue);
+  console.log(JSON.parse(queue));
+  return JSON.parse(queue);
+}
+
+export {getSearchParams, DisplayTotalWorkoutTime}
 export default calculateTotalWorkoutTime;

@@ -51,7 +51,7 @@ const Tabata = (props) => {
   const [isResting, setIsResting] = useState(false);
   const [hideControls, setHideControls] = useState({visibility:'hidden'});
 
-  const {removeItem, paused, queue, activeIndex, setActiveIndex, setElapsedTime, setReset, reset} = useContext(AppContext);
+  const { reset, moveTimer, setElapsedTime, queue, setReset, removeItem, paused, activeIndex, setActiveIndex, workoutEnded } = useContext(AppContext);
   const active = activeIndex === props.index;
 
   useInterval(() => {
@@ -79,8 +79,12 @@ const Tabata = (props) => {
       setCurrentRound(1);
       setIsResting(false);
       return;
+    } else if (workoutEnded) {
+      setTime(endTime);
+      setCurrentRound(totalRounds);
+      setIsResting(true);
     }
-  }, [reset, workTime]);
+  }, [reset, workTime, totalRounds, workoutEnded]);
     
   const handleDelete = () => {
     removeItem(props.index);
@@ -95,25 +99,38 @@ const Tabata = (props) => {
     setHideControls({visibility: 'hidden'});
   }
  
-  let upButton = '';
-  if (props.index === 0) {                   // Only 1 timer - Don't show up button
-    upButton = <UpDown hideControls={{visibility:'hidden'}}>&#8593;</UpDown>
-  } else {                                    // Display Move Up button
-    upButton = <UpDown hideControls={hideControls}>&#8593;</UpDown>
+  const handleMoveTimerUp = (direction) => {
+    moveTimer(props.index, 'up');
   }
-
-  let downButton = '';
-  if (props.index === queue.length - 1) {     // Last timer - Don't show down buttom
-    downButton = <UpDown hideControls={{visibility:'hidden'}}>&#8595;</UpDown>   
-  } else {                                    // Move Up and Move Down button
-    downButton = <UpDown hideControls={hideControls}>&#8595;</UpDown>
+ 
+  const handleMoveTimerDown = (direction) => {
+    moveTimer(props.index, 'down')
+  }
+ 
+  let displayUpButton = '', displayDownButton = '';
+  if (queue.length <= 1) {                   // Only 1 timer - Don't show up or down buttons
+    displayUpButton = {visibility:'hidden'}
+    displayDownButton = {visibility:'hidden'};
+  } else if (props.index === 0) {                   // 1st of more than 1 button - Don't show up button
+    displayUpButton = {visibility:'hidden'}
+    displayDownButton = hideControls;
+  } else if (props.index === queue.length - 1) {     // Last timer - Don't show down buttom
+    displayUpButton = hideControls
+    displayDownButton = {visibility:'hidden'}
+  } else {                                    // Display Move Up button
+    displayUpButton = hideControls;
+    displayDownButton = hideControls;
   }
 
   return (
     <div>
-      <Timer onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} border={!paused && active ? 'red' : 'gray'} id={'workout-timer-' + props.index} key={props.type}>
+      <Timer  onMouseEnter={handleMouseEnter} 
+              onMouseLeave={handleMouseLeave} 
+              border={!paused && active ? 'red' : 'gray'} 
+              id={props.index} key={props.type}
+      >
         <RowDiv>
-          {upButton}
+          <UpDown onClick={handleMoveTimerUp} hideControls={displayUpButton}>&#8593;</UpDown>
           <Delete hideControls={hideControls} onClick={handleDelete}>x</Delete>
         </RowDiv>
         <Title>{props.type}</Title>
@@ -121,7 +138,7 @@ const Tabata = (props) => {
             <Panel time={time} displayType='tabata' currentRound={currentRound} totalRounds={totalRounds} isResting={isResting}/>
           </div>
         <RowDiv>
-          {downButton}
+          <UpDown onClick={handleMoveTimerDown} hideControls={displayDownButton}>&#8595;</UpDown>
           <Description>{props.description}</Description>
         </RowDiv>
       </Timer>

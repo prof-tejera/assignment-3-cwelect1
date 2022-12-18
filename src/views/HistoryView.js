@@ -29,14 +29,45 @@ const ColumnDiv = styled.div`
 
 const HistoryView = () => {
 
-  const {workoutHistory} = useContext(AppContext);
+  const {queue, workoutHistory} = useContext(AppContext);
+  console.log('queue.length: ' + queue.length);
+  console.log('queue: ' + queue);
+  console.log('workoutHistory.length: ' + workoutHistory.length);
+  if (workoutHistory.length <= 1) {
+    workoutHistory.forEach (
+      workouts => {
+        workouts.forEach ( timer => {
+          for (const [key, value] of Object.entries(timer)) {
+            console.log(`${key}: ${value}`)
+        }
+      })
+    })
+  } else {
+    console.log('Shitake mushrooms!');
+    let count = 0;
+    workoutHistory.forEach (
+      workouts => {
+        console.log('Workout: ' + count);
+        count++;
+        //workouts.forEach ( workout => {
+          workouts.forEach ( timer => {
+            for (const [key, value] of Object.entries(timer)) {
+              console.log(`${key}: ${value}`)
+          }
+        //})
+      })
+    })
+  }
+
+  
+        
+
+  /*console.log('workoutHist: ' + workoutHistory)
   workoutHistory.forEach(
-    arr => arr.forEach( workout => {
-      for (const [key, value] of Object.entries(workout)) {
-        console.log(`${key}: ${value}`);}}
-    )
+    arr => console.log('workout: ' + arr)
   );
-  /*for (const [key, value] of Object.entries(workoutHistory)) {
+  
+  for (const [key, value] of Object.entries(workoutHistory)) {
     console.log(`www ${key}: ${value}`);
     for (const item in workout) {
       for (const [key, value] of Object.entries(item)) {

@@ -35,21 +35,21 @@ const menu_items = [
 
 const App = () => {
   return (
-    <ErrorBoundary FallbackComponent={ErrorHandler}>
-      <AppProvider>
-        <Container>
-          <Router basename="/assignment-3-cwelect1" >
-            <Menu menu_items={menu_items}/>
-            <Routes>
-              <Route path="/" element={<WorkoutView />} />
-              <Route path="/add" element={<AddTimerView />} />
-              <Route path="/docs" element={<DocumentationView />} />
-              <Route path="/history" element={<HistoryView />} />
-            </Routes>
-          </Router>
-        </Container>
-      </AppProvider>
-    </ErrorBoundary>
+    <Router basename="/assignment-3-cwelect1" >
+      <Container>
+        <ErrorBoundary FallbackComponent={ErrorHandler}>
+          <AppProvider>
+              <Menu menu_items={menu_items}/>
+              <Routes>
+                <Route path="/" element={<WorkoutView />} />
+                <Route path="/add" element={<AddTimerView />} />
+                <Route path="/docs" element={<DocumentationView />} />
+                <Route path="/history" element={<HistoryView />} />
+              </Routes>
+          </AppProvider>
+        </ErrorBoundary>
+      </Container>
+    </Router>
   );
 };
 

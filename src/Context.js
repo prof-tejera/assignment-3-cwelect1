@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import TIMER_TYPES from './Constants';
 import calculateTotalWorkoutTime from './utils/helpers';
 import { usePersistedState } from './hooks';
+import { useSearchParams } from 'react-router-dom';
 
 export const AppContext = React.createContext({});
 
 const AppProvider = ({ children }) => {
-  const [queue, setQueue] = usePersistedState('queue', []);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const workoutConfig = searchParams.get('queue') === null ? [] : JSON.parse(searchParams.get('queue'));
+  const [queue, setQueue] = usePersistedState('queue', workoutConfig);
   const [displayTimer, setDisplayTimer] = usePersistedState('displayTimer', true);
   const [totalWorkoutTime, setTotalWorkoutTime] = usePersistedState('totalWorkoutTime', 0);
   const [elapsedTime, setElapsedTime] = usePersistedState('elapsedTime', 0);
@@ -14,34 +17,13 @@ const AppProvider = ({ children }) => {
   const [activeIndex, setActiveIndex] = usePersistedState('activeIndex', 0);
   const [reset, setReset] = usePersistedState('reset', false);
   const [workoutEnded, setWorkoutEnded] = usePersistedState('workoutEnded', false);
-  const [workoutHistory, addWorkoutHistory] = usePersistedState('workoutHistory', [[]]);
-  
-  //if (SearchParams === undefined) {
-  //  ClearPersistedState; // Start over and clear all data
-  //}
-
-  useEffect(() => {
-    setTotalWorkoutTime(calculateTotalWorkoutTime(queue));
-  }, [queue, setTotalWorkoutTime]);
-
-  // Check if workout ended
-  useEffect(() => {
-    //console.log('queue.length: ' + queue.length + ' workoutEnded: ' + workoutEnded + ' activeIndex: ' + activeIndex + ' totalWorkoutTime: ' + totalWorkoutTime + ' elapsedTime: ' + elapsedTime)
-    if ((queue.length !== 0) && (activeIndex === queue.length) && totalWorkoutTime - elapsedTime === 0) {
-      setWorkoutEnded(true);
-      setPaused(true);
-      addToHistory([queue]);
-    } else {
-      setWorkoutEnded(false);
-      setReset(false); // bit hackish, but I'm out of time baby
-    }
-  }, [activeIndex, elapsedTime, setWorkoutEnded, totalWorkoutTime, queue, workoutEnded]);
+  const [workoutHistory, addWorkoutHistory] = usePersistedState('workoutHistory', []);
   
   const fastForward = () => {
     setActiveIndex(queue.length-1);
-    console.log(totalWorkoutTime);
     setElapsedTime(totalWorkoutTime);
     setPaused(true);
+    setWorkoutEnded(true);
   }
 
   const resetWorkout = (reset) => {
@@ -51,20 +33,37 @@ const AppProvider = ({ children }) => {
     setReset(reset);
   }
 
-  const addToHistory = (item) => {
-    addWorkoutHistory(workoutHistory => {
-      const copy = workoutHistory.slice();
-      if (workoutHistory.length > 1) {
-        copy[workoutHistory[workoutHistory.length]] = item;
-        return copy;
-      } else {
-        return workoutHistory[workoutHistory.length] = item;
-      }
-    });
-  }
+  useEffect(() => {
+    setTotalWorkoutTime(calculateTotalWorkoutTime(queue));
+  }, [queue, setTotalWorkoutTime]);
+
+  // Check if workout ended
+  useEffect(() => {
+    if ((queue.length !== 0) && (activeIndex === queue.length -1) && totalWorkoutTime - elapsedTime === 0) {
+      setWorkoutEnded(true);
+      setPaused(true);
+      //addToHistory([queue]);
+    } else {
+      setWorkoutEnded(false);
+      setReset(false); 
+    }
+  }, [activeIndex, elapsedTime, setPaused, setReset, setWorkoutEnded, totalWorkoutTime, queue, workoutEnded]);
   
   const addToQueue = (item) => {
     setQueue(q => [...q, item]);
+  }
+
+  const moveTimer = (index, direction) => {
+    let existingQueue = [...queue];
+    if (direction === 'up') {
+      const holdTimer = existingQueue.splice(index, 1)[0];
+      existingQueue.splice(index-1, 0, holdTimer);
+      setQueue(existingQueue);
+    } else if (direction === 'down') {
+      const holdTimer = existingQueue.splice(index, 1)[0];
+      existingQueue.splice(index + 1, 0, holdTimer);
+      setQueue(existingQueue);
+    }
   }
 
   const removeFromQueue = (item) => {
@@ -74,26 +73,29 @@ const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
-        displayTimer,
-        setDisplayTimer,
-        TIMER_TYPES,
-        activeIndex,
-        setActiveIndex,
-        totalWorkoutTime,
-        setTotalWorkoutTime: (time) => setTotalWorkoutTime(time),
-        elapsedTime,
-        setElapsedTime,
-        paused,
-        setPaused,
+        activeIndex,	
+        addItem: (item) => {addToQueue(item)},	
+        addWorkoutHistory: (item) => {addWorkoutHistory(() => [...workoutHistory, item])},
+		    displayTimer,
+        elapsedTime,	
         ff: fastForward,
-        reset,
-        setReset: resetWorkout,
-        addItem: (item) => {addToQueue(item)},
-        removeItem: (item) => {removeFromQueue(item)},
-        queue,
-        workoutEnded,
-        workoutHistory,
-        addWorkoutHistory: (item) => addToHistory(item)
+        moveTimer: (index, direction) => {moveTimer(index, direction)},	
+        paused,	
+        queue,	
+        removeItem: (item) => {removeFromQueue(item)},	
+        reset,	
+        setActiveIndex,	
+        setDisplayTimer,	
+        setElapsedTime,	
+        setPaused,	
+        setQueue,
+        setReset: resetWorkout,	
+        setSearchParams,
+        setTotalWorkoutTime: (time) => setTotalWorkoutTime(time),	
+        TIMER_TYPES,	
+        totalWorkoutTime,	
+        workoutEnded,	
+        workoutHistory
       }}
     >
       {children}
